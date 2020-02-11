@@ -1,0 +1,5 @@
+/*.substvars
+/.debhelper
+/catch2
+/debhelper-build-stamp
+/files

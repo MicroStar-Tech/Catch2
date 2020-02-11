@@ -1,0 +1,14 @@
+##
+## Use as much as we can from the Salsa CI team jobs.
+##
+include:
+  - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/salsa-ci.yml
+  - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/pipeline-jobs.yml
+
+##
+## Disable some jobs that don't make much sense here.
+##
+variables:
+  SALSA_CI_DISABLE_AUTOPKGTEST: '1'
+  SALSA_CI_DISABLE_BLHC: '1'
+  SALSA_CI_DISABLE_BUILD_PACKAGE_ANY: '1'
