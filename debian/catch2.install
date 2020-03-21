@@ -1,2 +1,0 @@
-single_include/catch2/*.hpp	/usr/include/catch2
-obj-*/catch2.pc			/usr/share/pkgconfig
