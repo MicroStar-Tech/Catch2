@@ -1,3 +1,13 @@
+catch2 (2.11.3-1) unstable; urgency=medium
+
+  * New upstream release
+  * debian/rules: build with cmake
+  * debian/gitlab-ci.yml: add temporary lintian workaround
+  * debian/tests: add autopkgtest tests
+  * debian/control: repo moved to debian group
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Thu, 09 Apr 2020 15:49:18 +0200
+
 catch2 (2.11.1-1) unstable; urgency=medium
 
   * Initial package (Closes: #901783)
