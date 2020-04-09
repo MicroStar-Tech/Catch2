@@ -5,8 +5,8 @@ Maintainer: Mathieu Mirmont <mat@parad0x.org>
 Build-Depends: cmake, debhelper-compat (= 12), python
 Standards-Version: 4.5.0
 Homepage: https://github.com/catchorg/Catch2
-Vcs-Browser: https://salsa.debian.org/mat-guest/catch2
-Vcs-Git: https://salsa.debian.org/mat-guest/catch2.git
+Vcs-Browser: https://salsa.debian.org/debian/catch2
+Vcs-Git: https://salsa.debian.org/debian/catch2.git
 Rules-Requires-Root: no
 
 Package: catch2
