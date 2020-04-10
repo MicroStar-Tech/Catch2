@@ -2,7 +2,7 @@ Source: catch2
 Section: devel
 Priority: optional
 Maintainer: Mathieu Mirmont <mat@parad0x.org>
-Build-Depends: cmake, debhelper-compat (= 12), python
+Build-Depends: cmake, debhelper-compat (= 12), python3
 Standards-Version: 4.5.0
 Homepage: https://github.com/catchorg/Catch2
 Vcs-Browser: https://salsa.debian.org/debian/catch2
