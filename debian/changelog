@@ -1,3 +1,11 @@
+catch2 (2.11.3-2) unstable; urgency=medium
+
+  * control: set Multi-Arch: foreign
+  * control: depend on python3 (Closes: #956333)
+  * tests/factorial-fail: fix the test
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Sat, 11 Apr 2020 19:45:08 +0200
+
 catch2 (2.11.3-1) unstable; urgency=medium
 
   * New upstream release
