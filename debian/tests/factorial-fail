@@ -31,4 +31,5 @@ cat <<-EOF > test.cpp
 EOF
 
 trace c++ -o test test.cpp
-trace ./test || true
+trace ./test || exit 0
+exit 1
