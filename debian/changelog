@@ -1,3 +1,14 @@
+catch2 (2.13.2-1) unstable; urgency=medium
+
+  [ Mathieu Mirmont ]
+  * New upstream release
+
+  [ Debian Janitor ]
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Wed, 07 Oct 2020 23:19:11 +0200
+
 catch2 (2.13.0-1) unstable; urgency=medium
 
   * New upstream release
