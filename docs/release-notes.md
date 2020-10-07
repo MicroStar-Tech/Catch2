@@ -2,6 +2,8 @@
 
 # Release notes
 **Contents**<br>
+[2.13.2](#2132)<br>
+[2.13.1](#2131)<br>
 [2.13.0](#2130)<br>
 [2.12.4](#2124)<br>
 [2.12.3](#2123)<br>
@@ -39,6 +41,38 @@
 [2.0.1](#201)<br>
 [Older versions](#older-versions)<br>
 [Even Older versions](#even-older-versions)<br>
+
+
+## 2.13.2
+
+### Improvements
+* Implemented workaround for AppleClang shadowing bug (#2030)
+* Implemented workaround for NVCC ICE (#2005, #2027)
+
+### Fixes
+* Fixed detection of `std::uncaught_exceptions` support under non-msvc platforms (#2021)
+* Fixed the experimental stdout/stderr capture under Windows (#2013)
+
+### Miscellaneous
+* `catch_discover_tests` has been improved significantly (#2023, #2039)
+  * You can now specify which reporter should be used
+  * You can now modify where the output will be written
+  * `WORKING_DIRECTORY` setting is respected
+* `ParseAndAddCatchTests` now supports `TEMPLATE_TEST_CASE` macros (#2031)
+* Various documentation fixes and improvements (#2022, #2028, #2034)
+
+
+## 2.13.1
+
+### Improvements
+* `ParseAndAddCatchTests` handles CMake v3.18.0 correctly (#1984)
+* Improved autodetection of `std::byte` (#1992)
+* Simplified implementation of templated test cases (#2007)
+  * This should have a tiny positive effect on its compilation throughput
+
+### Fixes
+* Automatic stringification of ranges handles sentinel ranges properly (#2004)
+
 
 ## 2.13.0
 
