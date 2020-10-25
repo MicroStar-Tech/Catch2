@@ -1,3 +1,10 @@
+catch2 (2.13.2-2) unstable; urgency=medium
+
+  [ Vagrant Cascadian ]
+  * rules: Disable fixfilepath feature (Closes: #972305)
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Sun, 25 Oct 2020 15:15:30 +0100
+
 catch2 (2.13.2-1) unstable; urgency=medium
 
   [ Mathieu Mirmont ]
