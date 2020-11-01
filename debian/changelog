@@ -1,3 +1,10 @@
+catch2 (2.13.3-1) unstable; urgency=medium
+
+  * New upstream release
+  * control: bump debhelper compatibility level to 13
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Sun, 01 Nov 2020 22:39:18 +0100
+
 catch2 (2.13.2-2) unstable; urgency=medium
 
   [ Vagrant Cascadian ]
