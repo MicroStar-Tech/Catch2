@@ -1,3 +1,12 @@
+catch2 (2.13.4-1) unstable; urgency=medium
+
+  * New upstream release
+  * Provide Catch2WithMain as libcatch2-dev package
+  * patches: make the build reproducible
+  * control: bump policy to 4.5.1, no change required
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Tue, 29 Dec 2020 21:12:46 +0100
+
 catch2 (2.13.3-1) unstable; urgency=medium
 
   * New upstream release
