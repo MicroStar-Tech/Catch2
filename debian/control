@@ -12,6 +12,7 @@ Rules-Requires-Root: no
 Package: catch2
 Architecture: all
 Depends: ${misc:Depends}
+Suggests: libcatch2-dev (= ${source:Version})
 Multi-Arch: foreign
 Description: C++ Automated Test Cases in Headers
  Catch2 is a multi-paradigm test framework for C++, which also
@@ -22,3 +23,23 @@ Description: C++ Automated Test Cases in Headers
  If you've been using an earlier version of Catch, please see the
  Breaking Changes section of the release notes before moving to
  Catch2.
+
+Package: libcatch2-dev
+Architecture: any
+Depends: catch2 (= ${source:Version}), ${misc:Depends}
+Section: libdevel
+Description: C++ Automated Test Cases in Headers - static library
+ Catch2 is a multi-paradigm test framework for C++, which also
+ supports Objective-C (and maybe C). It is primarily distributed as a
+ single header file, although certain extensions may require
+ additional headers.
+ .
+ If you've been using an earlier version of Catch, please see the
+ Breaking Changes section of the release notes before moving to
+ Catch2.
+ .
+ This package provides the static library Catch2WithMain. It should
+ provide a shared impl for all targets that need to link against
+ Catch2's implementation. However, due to limitations of C++ linking
+ and Catch2's v2 implementation, this is only experimental and might
+ not work under some circumstances.

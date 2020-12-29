@@ -1,5 +1,6 @@
 /*.substvars
 /.debhelper
 /catch2
+/libcatch2-dev
 /debhelper-build-stamp
 /files
