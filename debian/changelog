@@ -1,3 +1,9 @@
+catch2 (2.13.4-2) unstable; urgency=medium
+
+  * Merge the libcatch2-dev package into catch2
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Mon, 11 Jan 2021 22:27:33 +0100
+
 catch2 (2.13.4-1) unstable; urgency=medium
 
   * New upstream release
