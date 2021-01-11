@@ -18,9 +18,3 @@ override_dh_auto_configure:
 		-DCMAKE_INSTALL_DOCDIR=/usr/share/doc/catch2/docs \
 		-DCATCH_BUILD_TESTING=OFF \
 		-DCATCH_BUILD_TESTING=$(ENABLE_TESTING)
-
-override_dh_installdocs:
-	dh_installdocs -p catch2
-
-override_dh_installchangelogs:
-	dh_installchangelogs -p catch2
