@@ -1,3 +1,15 @@
+catch2 (2.13.7-1) unstable; urgency=medium
+
+  * New upstream release
+  * Rename the dev branch debian/unstable, per DEP-14
+  * patches: drop patch accepted upstream
+  * rules: build and ship libCatch2WithMain.a
+  * .gitignore: add missing files
+  * clean: add missing python cache dir
+  * gitlab-ci.yml: disable CI jobs test-build-{all,any}
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Tue, 17 Aug 2021 09:20:00 +0200
+
 catch2 (2.13.4-2) unstable; urgency=medium
 
   * Merge the libcatch2-dev package into catch2
