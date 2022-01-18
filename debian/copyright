@@ -36,7 +36,7 @@ Copyright: 2015-2017 RWTH Aachen University, Federal Republic of Germany
 License: BSD-3
 
 Files: debian/*
-Copyright: 2020 Mathieu Mirmont <mat@parad0x.org>
+Copyright: 2020-2022 Mathieu Mirmont <mat@parad0x.org>
 License: BSD-3
 
 License: Boost-1.0
