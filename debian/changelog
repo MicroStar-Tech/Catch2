@@ -1,3 +1,11 @@
+catch2 (2.13.8-1) unstable; urgency=medium
+
+  * New upstream release
+  * control: bump policy to 4.6.0, no change required
+  * copyright: bump the date for debian/* files
+
+ -- Mathieu Mirmont <mat@parad0x.org>  Tue, 18 Jan 2022 22:50:00 +0100
+
 catch2 (2.13.7-1) unstable; urgency=medium
 
   * New upstream release
