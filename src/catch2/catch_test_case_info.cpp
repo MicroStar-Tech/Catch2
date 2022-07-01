@@ -7,8 +7,6 @@
 // SPDX-License-Identifier: BSL-1.0
 #include <catch2/catch_test_case_info.hpp>
 #include <catch2/internal/catch_enforce.hpp>
-#include <catch2/catch_test_spec.hpp>
-#include <catch2/interfaces/catch_interfaces_testcase.hpp>
 #include <catch2/internal/catch_string_manip.hpp>
 #include <catch2/internal/catch_case_insensitive_comparisons.hpp>
 
@@ -60,7 +58,7 @@ namespace Catch {
             else if( tag == "!nonportable"_sr )
                 return TestCaseProperties::NonPortable;
             else if( tag == "!benchmark"_sr )
-                return static_cast<TestCaseProperties>(TestCaseProperties::Benchmark | TestCaseProperties::IsHidden );
+                return TestCaseProperties::Benchmark | TestCaseProperties::IsHidden;
             else
                 return TestCaseProperties::None;
         }

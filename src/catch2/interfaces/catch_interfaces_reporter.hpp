@@ -19,6 +19,7 @@
 #include <catch2/benchmark/catch_outlier_classification.hpp>
 
 
+#include <map>
 #include <string>
 #include <vector>
 #include <iosfwd>
@@ -26,20 +27,34 @@
 namespace Catch {
 
     struct ReporterDescription;
+    struct ListenerDescription;
     struct TagInfo;
     struct TestCaseInfo;
     class TestCaseHandle;
-    struct IConfig;
+    class IConfig;
+    class IStream;
+    enum class ColourMode : std::uint8_t;
 
     struct ReporterConfig {
-        ReporterConfig( IConfig const* _fullConfig, std::ostream& _stream );
+        ReporterConfig( IConfig const* _fullConfig,
+                        Detail::unique_ptr<IStream> _stream,
+                        ColourMode colourMode,
+                        std::map<std::string, std::string> customOptions );
 
-        std::ostream& stream() const;
+        ReporterConfig( ReporterConfig&& ) = default;
+        ReporterConfig& operator=( ReporterConfig&& ) = default;
+        ~ReporterConfig(); // = default
+
+        Detail::unique_ptr<IStream> takeStream() &&;
         IConfig const* fullConfig() const;
+        ColourMode colourMode() const;
+        std::map<std::string, std::string> const& customOptions() const;
 
     private:
-        std::ostream* m_stream;
+        Detail::unique_ptr<IStream> m_stream;
         IConfig const* m_fullConfig;
+        ColourMode m_colourMode;
+        std::map<std::string, std::string> m_customOptions;
     };
 
     struct TestRunInfo {
@@ -149,8 +164,19 @@ namespace Catch {
         bool shouldReportAllAssertions = false;
     };
 
-    //! The common base for all reporters and event listeners
-    struct IStreamingReporter {
+    /**
+     * The common base for all reporters and event listeners
+     *
+     * Implementing classes must also implement:
+     *
+     *     //! User-friendly description of the reporter/listener type
+     *     static std::string getDescription()
+     *
+     * Generally shouldn't be derived from by users of Catch2 directly,
+     * instead they should derive from one of the utility bases that
+     * derive from this class.
+     */
+    class IEventListener {
     protected:
         //! Derived classes can set up their preferences here
         ReporterPreferences m_preferences;
@@ -158,9 +184,9 @@ namespace Catch {
         IConfig const* m_config;
 
     public:
-        IStreamingReporter( IConfig const* config ): m_config( config ) {}
+        IEventListener( IConfig const* config ): m_config( config ) {}
 
-        virtual ~IStreamingReporter(); // = default;
+        virtual ~IEventListener(); // = default;
 
         // Implementing class must also provide the following static methods:
         // static std::string getDescription();
@@ -224,13 +250,14 @@ namespace Catch {
 
         //! Writes out information about provided reporters using reporter-specific format
         virtual void listReporters(std::vector<ReporterDescription> const& descriptions) = 0;
+        //! Writes out the provided listeners descriptions using reporter-specific format
+        virtual void listListeners(std::vector<ListenerDescription> const& descriptions) = 0;
         //! Writes out information about provided tests using reporter-specific format
         virtual void listTests(std::vector<TestCaseHandle> const& tests) = 0;
         //! Writes out information about the provided tags using reporter-specific format
         virtual void listTags(std::vector<TagInfo> const& tags) = 0;
-
     };
-    using IStreamingReporterPtr = Detail::unique_ptr<IStreamingReporter>;
+    using IEventListenerPtr = Detail::unique_ptr<IEventListener>;
 
 } // end namespace Catch
 

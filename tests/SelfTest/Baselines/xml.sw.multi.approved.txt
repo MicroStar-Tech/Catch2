@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Catch2TestRun name="<exe-name>" rng-seed="1" filters="~[!nonportable]~[!benchmark]~[approvals] *">
+<Catch2TestRun name="<exe-name>" rng-seed="1" catch2-version="<version>" filters="~[!nonportable]~[!benchmark]~[approvals] *">
   <TestCase name="# A test name that starts with a #" filename="tests/<exe-name>/UsageTests/Misc.tests.cpp" >
-    <OverallResult success="true"/>
-  </TestCase>
-  <TestCase name="#1005: Comparing pointer to int and long (NULL can be either on various systems)" tags="[Decomposition]" filename="tests/<exe-name>/UsageTests/Decomposition.tests.cpp" >
-    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/Decomposition.tests.cpp" >
-      <Original>
-        fptr == 0
-      </Original>
-      <Expanded>
-        0 == 0
-      </Expanded>
-    </Expression>
-    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/Decomposition.tests.cpp" >
-      <Original>
-        fptr == 0l
-      </Original>
-      <Expanded>
-        0 == 0
-      </Expanded>
-    </Expression>
     <OverallResult success="true"/>
   </TestCase>
   <TestCase name="#1027: Bitfields can be captured" filename="tests/<exe-name>/UsageTests/Compilation.tests.cpp" >
@@ -799,7 +780,7 @@ Nor would this
     </Expression>
     <OverallResult success="true"/>
   </TestCase>
-  <TestCase name="#835 -- errno should not be touched by Catch" tags="[!shouldfail][.][failing]" filename="tests/<exe-name>/UsageTests/Misc.tests.cpp" >
+  <TestCase name="#835 -- errno should not be touched by Catch2" tags="[!shouldfail][.][failing]" filename="tests/<exe-name>/UsageTests/Misc.tests.cpp" >
     <Expression success="false" type="CHECK" filename="tests/<exe-name>/UsageTests/Misc.tests.cpp" >
       <Original>
         f() == 0
@@ -810,7 +791,7 @@ Nor would this
     </Expression>
     <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/Misc.tests.cpp" >
       <Original>
-        errno == 1
+        errno_after == 1
       </Original>
       <Expanded>
         1 == 1
@@ -3327,13 +3308,73 @@ Nor would this
     </Section>
     <OverallResult success="true"/>
   </TestCase>
+  <TestCase name="ColourGuard behaviour" tags="[console-colours]" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+    <Section name="ColourGuard is disengaged by default" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+        <Original>
+          streamWrapper.str().empty()
+        </Original>
+        <Expanded>
+          true
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <Section name="ColourGuard is engaged by op&lt;&lt;" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+        <Original>
+          streamWrapper.str() == "1\nUsing code: 2\n2\nUsing code: 0\n3\n"
+        </Original>
+        <Expanded>
+          "1
+Using code: 2
+2
+Using code: 0
+3
+"
+==
+"1
+Using code: 2
+2
+Using code: 0
+3
+"
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <Section name="ColourGuard can be engaged explicitly" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/ColourImpl.tests.cpp" >
+        <Original>
+          streamWrapper.str() == "Using code: 2\nA\nB\nUsing code: 0\nC\n"
+        </Original>
+        <Expanded>
+          "Using code: 2
+A
+B
+Using code: 0
+C
+"
+==
+"Using code: 2
+A
+B
+Using code: 0
+C
+"
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="Combining MatchAllOfGeneric does not nest" tags="[matchers][templated]" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
       <Original>
         1, ( MatcherA() &amp;&amp; MatcherB() ) &amp;&amp; MatcherC()
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f and equals: (long long) 1 and equals: (T) 1 )
+        1 ( equals: (int) 1 or (string) "1" and equals: (long long) 1 and equals: (T) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3341,7 +3382,7 @@ Nor would this
         1, MatcherA() &amp;&amp; ( MatcherB() &amp;&amp; MatcherC() )
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f and equals: (long long) 1 and equals: (T) 1 )
+        1 ( equals: (int) 1 or (string) "1" and equals: (long long) 1 and equals: (T) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3349,7 +3390,7 @@ Nor would this
         1, ( MatcherA() &amp;&amp; MatcherB() ) &amp;&amp; ( MatcherC() &amp;&amp; MatcherD() )
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f and equals: (long long) 1 and equals: (T) 1 and equals: true )
+        1 ( equals: (int) 1 or (string) "1" and equals: (long long) 1 and equals: (T) 1 and equals: true )
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -3360,7 +3401,7 @@ Nor would this
         1, ( MatcherA() || MatcherB() ) || MatcherC()
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f or equals: (long long) 1 or equals: (T) 1 )
+        1 ( equals: (int) 1 or (string) "1" or equals: (long long) 1 or equals: (T) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3368,7 +3409,7 @@ Nor would this
         1, MatcherA() || ( MatcherB() || MatcherC() )
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f or equals: (long long) 1 or equals: (T) 1 )
+        1 ( equals: (int) 1 or (string) "1" or equals: (long long) 1 or equals: (T) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3376,7 +3417,7 @@ Nor would this
         1, ( MatcherA() || MatcherB() ) || ( MatcherC() || MatcherD() )
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f or equals: (long long) 1 or equals: (T) 1 or equals: true )
+        1 ( equals: (int) 1 or (string) "1" or equals: (long long) 1 or equals: (T) 1 or equals: true )
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -3387,7 +3428,7 @@ Nor would this
         0, !MatcherA()
       </Original>
       <Expanded>
-        0 not equals: (int) 1 or (float) 1.0f
+        0 not equals: (int) 1 or (string) "1"
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3395,7 +3436,7 @@ Nor would this
         1, !!MatcherA()
       </Original>
       <Expanded>
-        1 equals: (int) 1 or (float) 1.0f
+        1 equals: (int) 1 or (string) "1"
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3403,7 +3444,7 @@ Nor would this
         0, !!!MatcherA()
       </Original>
       <Expanded>
-        0 not equals: (int) 1 or (float) 1.0f
+        0 not equals: (int) 1 or (string) "1"
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3411,7 +3452,7 @@ Nor would this
         1, !!!!MatcherA()
       </Original>
       <Expanded>
-        1 equals: (int) 1 or (float) 1.0f
+        1 equals: (int) 1 or (string) "1"
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -3425,7 +3466,7 @@ Nor would this
         1, MatcherA() || MatcherB()
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f or equals: (long long) 1 )
+        1 ( equals: (int) 1 or (string) "1" or equals: (long long) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3433,7 +3474,7 @@ Nor would this
         1, MatcherA() &amp;&amp; MatcherB()
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f and equals: (long long) 1 )
+        1 ( equals: (int) 1 or (string) "1" and equals: (long long) 1 )
       </Expanded>
     </Expression>
     <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -3441,7 +3482,7 @@ Nor would this
         1, MatcherA() || !MatcherB()
       </Original>
       <Expanded>
-        1 ( equals: (int) 1 or (float) 1.0f or not equals: (long long) 1 )
+        1 ( equals: (int) 1 or (string) "1" or not equals: (long long) 1 )
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -4224,6 +4265,17 @@ Nor would this
     </Section>
     <OverallResult success="true"/>
   </TestCase>
+  <TestCase name="Cout stream properly declares it writes to stdout" tags="[streams]" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "-" )->isConsole()
+      </Original>
+      <Expanded>
+        true
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="Custom exceptions can be translated when testing for nothrow" tags="[!throws][.][failing]" filename="tests/<exe-name>/UsageTests/Exception.tests.cpp" >
     <Expression success="false" type="REQUIRE_NOTHROW" filename="tests/<exe-name>/UsageTests/Exception.tests.cpp" >
       <Original>
@@ -4302,6 +4354,17 @@ Nor would this
         {** unexpected enum value **}
 ==
 "{** unexpected enum value **}"
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
+  <TestCase name="Empty stream name opens cout stream" tags="[streams]" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "" )->isConsole()
+      </Original>
+      <Expanded>
+        true
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -8158,6 +8221,87 @@ Nor would this
     </Expression>
     <OverallResult success="true"/>
   </TestCase>
+  <TestCase name="Hashers with different seed produce different hash with same test case" tags="[test-case-hash]" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Original>
+        h1( dummy ) != h2( dummy )
+      </Original>
+      <Expanded>
+        3422778688 (0x<hex digits>)
+!=
+130711275 (0x<hex digits>)
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
+  <TestCase name="Hashers with same seed produce same hash" tags="[test-case-hash]" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Original>
+        h1( dummy ) == h2( dummy )
+      </Original>
+      <Expanded>
+        3422778688 (0x<hex digits>)
+==
+3422778688 (0x<hex digits>)
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
+  <TestCase name="Hashing different test cases produces different result" tags="[test-case-hash]" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+    <Section name="Different test name" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+        <Original>
+          h( dummy1 ) != h( dummy2 )
+        </Original>
+        <Expanded>
+          2903002874 (0x<hex digits>)
+!=
+2668622104 (0x<hex digits>)
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <Section name="Different classname" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+        <Original>
+          h( dummy1 ) != h( dummy2 )
+        </Original>
+        <Expanded>
+          2673152918 (0x<hex digits>)
+!=
+3916075712 (0x<hex digits>)
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <Section name="Different tags" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+        <Original>
+          h( dummy1 ) != h( dummy2 )
+        </Original>
+        <Expanded>
+          2074929312 (0x<hex digits>)
+!=
+3429949824 (0x<hex digits>)
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <OverallResult success="true"/>
+  </TestCase>
+  <TestCase name="Hashing test case produces same hash across multiple calls" tags="[test-case-hash]" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/TestCaseInfoHasher.tests.cpp" >
+      <Original>
+        h( dummy ) == h( dummy )
+      </Original>
+      <Expanded>
+        3422778688 (0x<hex digits>)
+==
+3422778688 (0x<hex digits>)
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="INFO and WARN do not abort tests" tags="[.][messages]" filename="tests/<exe-name>/UsageTests/Message.tests.cpp" >
     <Info>
       this is a message
@@ -11308,12 +11452,10 @@ Nor would this
       </Expression>
       <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
         <Original>
-          config.reporterSpecifications == std::vector&lt;Catch::ConfigData::ReporterAndFile>{ {"console", {}} }
+          config.reporterSpecifications.empty()
         </Original>
         <Expanded>
-          { { console, &lt;default-output> } }
-==
-{ { console, &lt;default-output> } }
+          true
         </Expanded>
       </Expression>
       <Expression success="true" type="CHECK_FALSE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
@@ -11324,7 +11466,39 @@ Nor would this
           !false
         </Expanded>
       </Expression>
-      <OverallResults successes="7" failures="0" expectedFailures="0"/>
+      <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
+        <Original>
+          cfg.getReporterSpecs().size() == 1
+        </Original>
+        <Expanded>
+          1 == 1
+        </Expanded>
+      </Expression>
+      <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
+        <Original>
+          cfg.getReporterSpecs()[0] == Catch::ReporterSpec{ expectedReporter, {}, {}, {} }
+        </Original>
+        <Expanded>
+          {?} == {?}
+        </Expanded>
+      </Expression>
+      <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
+        <Original>
+          cfg.getProcessedReporterSpecs().size() == 1
+        </Original>
+        <Expanded>
+          1 == 1
+        </Expanded>
+      </Expression>
+      <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
+        <Original>
+          cfg.getProcessedReporterSpecs()[0] == Catch::ProcessedReporterSpec{ expectedReporter, std::string{}, Catch::ColourMode::PlatformDefault, {} }
+        </Original>
+        <Expanded>
+          {?} == {?}
+        </Expanded>
+      </Expression>
+      <OverallResults successes="11" failures="0" expectedFailures="0"/>
     </Section>
     <Section name="test lists" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
       <Section name="Specify one test case using" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
@@ -11458,12 +11632,10 @@ Nor would this
         </Info>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.reporterSpecifications == vec_ReporterAndFile{ {"console", {}} }
+            config.reporterSpecifications == vec_Specs{ { "console", {}, {}, {} } }
           </Original>
           <Expanded>
-            { { console, &lt;default-output> } }
-==
-{ { console, &lt;default-output> } }
+            { {?} } == { {?} }
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11488,12 +11660,10 @@ Nor would this
         </Info>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.reporterSpecifications == vec_ReporterAndFile{ {"xml", {}} }
+            config.reporterSpecifications == vec_Specs{ { "xml", {}, {}, {} } }
           </Original>
           <Expanded>
-            { { xml, &lt;default-output> } }
-==
-{ { xml, &lt;default-output> } }
+            { {?} } == { {?} }
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11518,12 +11688,10 @@ Nor would this
         </Info>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.reporterSpecifications == vec_ReporterAndFile{ {"junit", {}} }
+            config.reporterSpecifications == vec_Specs{ { "junit", {}, {}, {} } }
           </Original>
           <Expanded>
-            { { junit, &lt;default-output> } }
-==
-{ { junit, &lt;default-output> } }
+            { {?} } == { {?} }
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11570,12 +11738,10 @@ Nor would this
         </Info>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.reporterSpecifications == vec_ReporterAndFile{ {"console", "out.txt"s} }
+            config.reporterSpecifications == vec_Specs{ { "console", "out.txt"s, {}, {} } }
           </Original>
           <Expanded>
-            { { console, out.txt } }
-==
-{ { console, out.txt } }
+            { {?} } == { {?} }
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11600,34 +11766,10 @@ Nor would this
         </Info>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.reporterSpecifications == vec_ReporterAndFile{ {"console", "C:\\Temp\\out.txt"s} }
+            config.reporterSpecifications == vec_Specs{ { "console", "C:\\Temp\\out.txt"s, {}, {} } }
           </Original>
           <Expanded>
-            { { console, C:\Temp\out.txt } }
-==
-{ { console, C:\Temp\out.txt } }
-          </Expanded>
-        </Expression>
-        <OverallResults successes="2" failures="0" expectedFailures="0"/>
-      </Section>
-      <OverallResults successes="2" failures="0" expectedFailures="0"/>
-    </Section>
-    <Section name="reporter" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
-      <Section name="Output file cannot be empty" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
-        <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
-          <Original>
-            !result
-          </Original>
-          <Expanded>
-            true
-          </Expanded>
-        </Expression>
-        <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
-          <Original>
-            result.errorMessage(), ContainsSubstring("empty filename")
-          </Original>
-          <Expanded>
-            "Reporter 'console' has empty filename specified as its output. Supply a filename or remove the colons to use the default output." contains: "empty filename"
+            { {?} } == { {?} }
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11639,7 +11781,7 @@ Nor would this
         <Section name="All with output files" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
             <Original>
-              cli.parse({ "test", "-r", "xml::output.xml", "-r", "junit::output-junit.xml" })
+              cli.parse({ "test", "-r", "xml::out=output.xml", "-r", "junit::out=output-junit.xml" })
             </Original>
             <Expanded>
               {?}
@@ -11647,12 +11789,10 @@ Nor would this
           </Expression>
           <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
             <Original>
-              config.reporterSpecifications == vec_ReporterAndFile{ {"xml", "output.xml"s}, {"junit", "output-junit.xml"s} }
+              config.reporterSpecifications == vec_Specs{ { "xml", "output.xml"s, {}, {} }, { "junit", "output-junit.xml"s, {}, {} } }
             </Original>
             <Expanded>
-              { { xml, output.xml }, { junit, output-junit.xml } }
-==
-{ { xml, output.xml }, { junit, output-junit.xml } }
+              { {?}, {?} } == { {?}, {?} }
             </Expanded>
           </Expression>
           <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -11666,7 +11806,7 @@ Nor would this
         <Section name="Mixed output files and default output" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
             <Original>
-              cli.parse({ "test", "-r", "xml::output.xml", "-r", "console" })
+              cli.parse({ "test", "-r", "xml::out=output.xml", "-r", "console" })
             </Original>
             <Expanded>
               {?}
@@ -11674,12 +11814,10 @@ Nor would this
           </Expression>
           <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
             <Original>
-              config.reporterSpecifications == vec_ReporterAndFile{ {"xml", "output.xml"s}, {"console", {}} }
+              config.reporterSpecifications == vec_Specs{ { "xml", "output.xml"s, {}, {} }, { "console", {}, {}, {} } }
             </Original>
             <Expanded>
-              { { xml, output.xml }, { console, &lt;default-output> } }
-==
-{ { xml, output.xml }, { console, &lt;default-output> } }
+              { {?}, {?} } == { {?}, {?} }
             </Expanded>
           </Expression>
           <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -12086,7 +12224,7 @@ Nor would this
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.useColour == UseColour::Auto
+            config.defaultColourMode == ColourMode::PlatformDefault
           </Original>
           <Expanded>
             0 == 0
@@ -12100,7 +12238,7 @@ Nor would this
       <Section name="auto" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
         <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            cli.parse({"test", "--use-colour", "auto"})
+            cli.parse( { "test", "--colour-mode", "default" } )
           </Original>
           <Expanded>
             {?}
@@ -12108,7 +12246,7 @@ Nor would this
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.useColour == UseColour::Auto
+            config.defaultColourMode == ColourMode::PlatformDefault
           </Original>
           <Expanded>
             0 == 0
@@ -12122,7 +12260,7 @@ Nor would this
       <Section name="yes" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
         <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            cli.parse({"test", "--use-colour", "yes"})
+            cli.parse({"test", "--colour-mode", "ansi"})
           </Original>
           <Expanded>
             {?}
@@ -12130,7 +12268,7 @@ Nor would this
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.useColour == UseColour::Yes
+            config.defaultColourMode == ColourMode::ANSI
           </Original>
           <Expanded>
             1 == 1
@@ -12144,7 +12282,7 @@ Nor would this
       <Section name="no" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
         <Expression success="true" type="CHECK" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            cli.parse({"test", "--use-colour", "no"})
+            cli.parse({"test", "--colour-mode", "none"})
           </Original>
           <Expanded>
             {?}
@@ -12152,10 +12290,10 @@ Nor would this
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/CmdLine.tests.cpp" >
           <Original>
-            config.useColour == UseColour::No
+            config.defaultColourMode == ColourMode::None
           </Original>
           <Expanded>
-            2 == 2
+            3 == 3
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -12177,7 +12315,7 @@ Nor would this
             result.errorMessage(), ContainsSubstring( "colour mode must be one of" )
           </Original>
           <Expanded>
-            "colour mode must be one of: auto, yes or no. 'wrong' not recognised" contains: "colour mode must be one of"
+            "colour mode must be one of: default, ansi, win32, or none. 'wrong' is not recognised" contains: "colour mode must be one of"
           </Expanded>
         </Expression>
         <OverallResults successes="2" failures="0" expectedFailures="0"/>
@@ -12415,6 +12553,17 @@ Nor would this
       </Expanded>
     </Expression>
     <OverallResult success="false"/>
+  </TestCase>
+  <TestCase name="Registering reporter with '::' in name fails" tags="[registration][reporters]" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
+    <Expression success="true" type="REQUIRE_THROWS_WITH" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
+      <Original>
+        registry.registerReporter( "with::doublecolons", Catch::Detail::make_unique&lt;TestReporterFactory>() ), "'::' is not allowed in reporter name: 'with::doublecolons'"
+      </Original>
+      <Expanded>
+        "'::' is not allowed in reporter name: 'with::doublecolons'" equals: "'::' is not allowed in reporter name: 'with::doublecolons'"
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
   </TestCase>
   <TestCase name="Regression test #1" tags="[matchers][vector]" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
     <Expression success="true" type="CHECK_THAT" filename="tests/<exe-name>/UsageTests/Matchers.tests.cpp" >
@@ -15578,13 +15727,13 @@ Message from section two
     <Section name="Listing reporters" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
       <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
         <Original>
-          listingString, ContainsSubstring("fake reporter"s)
+          listingString, ContainsSubstring( "fake reporter"s ) &amp;&amp; ContainsSubstring( "fake description"s )
         </Original>
         <Expanded>
           "Available reporters:
   fake reporter:  fake description
 
-" contains: "fake reporter"
+" ( contains: "fake reporter" and contains: "fake description" )
         </Expanded>
       </Expression>
       <OverallResults successes="1" failures="0" expectedFailures="0"/>
@@ -15601,6 +15750,20 @@ Message from section two
 1 test case
 
 " ( contains: "fake test name" and contains: "fakeTestTag" )
+        </Expanded>
+      </Expression>
+      <OverallResults successes="1" failures="0" expectedFailures="0"/>
+    </Section>
+    <Section name="Listing listeners" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
+      <Expression success="true" type="REQUIRE_THAT" filename="tests/<exe-name>/IntrospectiveTests/Reporters.tests.cpp" >
+        <Original>
+          listingString, ContainsSubstring( "fakeListener"s ) &amp;&amp; ContainsSubstring( "fake description"s )
+        </Original>
+        <Expanded>
+          "Registered listeners:
+  fakeListener:  fake description
+
+" ( contains: "fakeListener" and contains: "fake description" )
         </Expanded>
       </Expression>
       <OverallResults successes="1" failures="0" expectedFailures="0"/>
@@ -16348,7 +16511,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16356,7 +16519,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[1]
+            mocked.m_derefed[1]
           </Original>
           <Expanded>
             true
@@ -16364,7 +16527,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[2]
+            mocked.m_derefed[2]
           </Original>
           <Expanded>
             true
@@ -16372,7 +16535,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[3]
+            mocked.m_derefed[3]
           </Original>
           <Expanded>
             true
@@ -16380,7 +16543,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[4]
+            mocked.m_derefed[4]
           </Original>
           <Expanded>
             true
@@ -16402,7 +16565,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16410,7 +16573,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[1]
+            mocked.m_derefed[1]
           </Original>
           <Expanded>
             true
@@ -16418,7 +16581,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[2]
+            mocked.m_derefed[2]
           </Original>
           <Expanded>
             true
@@ -16426,7 +16589,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[3])
+            !(mocked.m_derefed[3])
           </Original>
           <Expanded>
             !false
@@ -16434,7 +16597,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[4])
+            !(mocked.m_derefed[4])
           </Original>
           <Expanded>
             !false
@@ -16489,7 +16652,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16497,7 +16660,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[1]
+            mocked.m_derefed[1]
           </Original>
           <Expanded>
             true
@@ -16505,7 +16668,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[2]
+            mocked.m_derefed[2]
           </Original>
           <Expanded>
             true
@@ -16513,7 +16676,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[3]
+            mocked.m_derefed[3]
           </Original>
           <Expanded>
             true
@@ -16521,7 +16684,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[4]
+            mocked.m_derefed[4]
           </Original>
           <Expanded>
             true
@@ -16543,7 +16706,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16551,7 +16714,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[1])
+            !(mocked.m_derefed[1])
           </Original>
           <Expanded>
             !false
@@ -16559,7 +16722,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[2])
+            !(mocked.m_derefed[2])
           </Original>
           <Expanded>
             !false
@@ -16567,7 +16730,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[3])
+            !(mocked.m_derefed[3])
           </Original>
           <Expanded>
             !false
@@ -16575,7 +16738,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[4])
+            !(mocked.m_derefed[4])
           </Original>
           <Expanded>
             !false
@@ -16630,7 +16793,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16638,7 +16801,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[1]
+            mocked.m_derefed[1]
           </Original>
           <Expanded>
             true
@@ -16646,7 +16809,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[2]
+            mocked.m_derefed[2]
           </Original>
           <Expanded>
             true
@@ -16654,7 +16817,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[3]
+            mocked.m_derefed[3]
           </Original>
           <Expanded>
             true
@@ -16662,7 +16825,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[4]
+            mocked.m_derefed[4]
           </Original>
           <Expanded>
             true
@@ -16684,7 +16847,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            mocked.derefed[0]
+            mocked.m_derefed[0]
           </Original>
           <Expanded>
             true
@@ -16692,7 +16855,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[1])
+            !(mocked.m_derefed[1])
           </Original>
           <Expanded>
             !false
@@ -16700,7 +16863,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[2])
+            !(mocked.m_derefed[2])
           </Original>
           <Expanded>
             !false
@@ -16708,7 +16871,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[3])
+            !(mocked.m_derefed[3])
           </Original>
           <Expanded>
             !false
@@ -16716,7 +16879,7 @@ There is no extra whitespace here
         </Expression>
         <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/UsageTests/MatchersRanges.tests.cpp" >
           <Original>
-            !(mocked.derefed[4])
+            !(mocked.m_derefed[4])
           </Original>
           <Expanded>
             !false
@@ -18615,6 +18778,17 @@ There is no extra whitespace here
     </Expression>
     <OverallResult success="false"/>
   </TestCase>
+  <TestCase name="makeStream recognizes %debug stream name" tags="[streams]" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+    <Expression success="true" type="REQUIRE_NOTHROW" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "%debug" )
+      </Original>
+      <Expanded>
+        Catch::makeStream( "%debug" )
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="make_unique reimplementation" tags="[internals][unique-ptr]" filename="tests/<exe-name>/IntrospectiveTests/UniquePtr.tests.cpp" >
     <Section name="From lvalue copies" filename="tests/<exe-name>/IntrospectiveTests/UniquePtr.tests.cpp" >
       <Expression success="true" type="REQUIRE_FALSE" filename="tests/<exe-name>/IntrospectiveTests/UniquePtr.tests.cpp" >
@@ -19322,6 +19496,17 @@ There is no extra whitespace here
     </Section>
     <OverallResult success="true"/>
   </TestCase>
+  <TestCase name="request an unknown %-starting stream fails" tags="[streams]" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+    <Expression success="true" type="REQUIRE_THROWS" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "%somestream" )
+      </Original>
+      <Expanded>
+        Catch::makeStream( "%somestream" )
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="resolution" tags="[benchmark]" filename="tests/<exe-name>/IntrospectiveTests/InternalBenchmark.tests.cpp" >
     <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/InternalBenchmark.tests.cpp" >
       <Original>
@@ -19840,6 +20025,25 @@ There is no extra whitespace here
     </Expression>
     <OverallResult success="true"/>
   </TestCase>
+  <TestCase name="stdout and stderr streams have %-starting name" tags="[streams]" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "%stderr" )->isConsole()
+      </Original>
+      <Expanded>
+        true
+      </Expanded>
+    </Expression>
+    <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/IntrospectiveTests/Stream.tests.cpp" >
+      <Original>
+        Catch::makeStream( "%stdout" )->isConsole()
+      </Original>
+      <Expanded>
+        true
+      </Expanded>
+    </Expression>
+    <OverallResult success="true"/>
+  </TestCase>
   <TestCase name="stringify ranges" tags="[toString]" filename="tests/<exe-name>/UsageTests/ToStringWhich.tests.cpp" >
     <Expression success="true" type="REQUIRE" filename="tests/<exe-name>/UsageTests/ToStringWhich.tests.cpp" >
       <Original>
@@ -20251,19 +20455,6 @@ There is no extra whitespace here
       </Original>
       <Expanded>
         "{ 0 }" == "{ 0 }"
-      </Expanded>
-    </Expression>
-    <OverallResult success="true"/>
-  </TestCase>
-  <TestCase name="tuple&lt;0,int,const char *>" tags="[toString][tuple]" filename="tests/<exe-name>/UsageTests/ToStringTuple.tests.cpp" >
-    <Expression success="true" type="CHECK" filename="tests/<exe-name>/UsageTests/ToStringTuple.tests.cpp" >
-      <Original>
-        "{ 0, 42, \"Catch me\" }" == ::Catch::Detail::stringify(value)
-      </Original>
-      <Expanded>
-        "{ 0, 42, "Catch me" }"
-==
-"{ 0, 42, "Catch me" }"
       </Expanded>
     </Expression>
     <OverallResult success="true"/>
@@ -20883,6 +21074,6 @@ There is no extra whitespace here
     </Section>
     <OverallResult success="true"/>
   </TestCase>
-  <OverallResults successes="2056" failures="143" expectedFailures="27"/>
-  <OverallResultsCases successes="292" failures="83" expectedFailures="7"/>
+  <OverallResults successes="2072" failures="143" expectedFailures="27"/>
+  <OverallResultsCases successes="301" failures="83" expectedFailures="7"/>
 </Catch2TestRun>

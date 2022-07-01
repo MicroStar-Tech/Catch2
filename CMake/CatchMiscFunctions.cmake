@@ -1,3 +1,11 @@
+
+#              Copyright Catch2 Authors
+# Distributed under the Boost Software License, Version 1.0.
+#   (See accompanying file LICENSE_1_0.txt or copy at
+#        https://www.boost.org/LICENSE_1_0.txt)
+
+# SPDX-License-Identifier: BSL-1.0
+
 include(CheckCXXCompilerFlag)
 function(add_cxx_flag_if_supported_to_targets flagname targets)
     check_cxx_compiler_flag("${flagname}" HAVE_FLAG_${flagname})
@@ -35,35 +43,58 @@ function(add_warnings_to_targets targets)
 
     if (NOT MSVC)
         set(CHECKED_WARNING_FLAGS
-          "-Wall"
-          "-Wextra"
-          "-Wpedantic"
-          "-Wweak-vtables"
-          "-Wunreachable-code"
-          "-Wmissing-declarations"
-          "-Wexit-time-destructors"
-          "-Wglobal-constructors"
-          "-Wmissing-noreturn"
-          "-Wparentheses"
-          "-Wextra-semi"
-          "-Wunreachable-code"
-          "-Wstrict-aliasing"
-          "-Wreturn-std-move"
-          "-Wmissing-braces"
-          "-Wdeprecated"
-          "-Wvla"
-          "-Wundef"
-          "-Wmisleading-indentation"
-          "-Wcatch-value"
           "-Wabsolute-value"
-          "-Wreturn-std-move"
-          "-Wunused-parameter"
-          "-Wunused-function"
+          "-Wall"
+          "-Wc++20-compat"
           "-Wcall-to-pure-virtual-from-ctor-dtor"
+          "-Wcast-align"
+          "-Wcatch-value"
+          "-Wdangling"
+          "-Wdeprecated"
           "-Wdeprecated-register"
-          "-Wsuggest-override"
-          "-Wshadow"
+          "-Wexceptions"
+          "-Wexit-time-destructors"
+          "-Wextra"
+          "-Wextra-semi"
+          "-Wfloat-equal"
+          "-Wglobal-constructors"
+          "-Winit-self"
+          "-Wmisleading-indentation"
+          "-Wmismatched-new-delete"
+          "-Wmismatched-return-types"
+          "-Wmismatched-tags"
+          "-Wmissing-braces"
+          "-Wmissing-declarations"
+          "-Wmissing-noreturn"
+          "-Wmissing-prototypes"
+          "-Wmissing-variable-declarations"
+          "-Wnull-dereference"
           "-Wold-style-cast"
+          "-Woverloaded-virtual"
+          "-Wparentheses"
+          "-Wpedantic"
+          "-Wreorder"
+          "-Wreturn-std-move"
+          "-Wshadow"
+          "-Wstrict-aliasing"
+          "-Wsuggest-destructor-override"
+          "-Wsuggest-override"
+          "-Wundef"
+          "-Wuninitialized"
+          "-Wunneeded-internal-declaration"
+          "-Wunreachable-code"
+          "-Wunused"
+          "-Wunused-function"
+          "-Wunused-parameter"
+          "-Wvla"
+          "-Wweak-vtables"
+
+          # This is a useful warning, but our tests sometimes rely on
+          # functions being present, but not picked (e.g. various checks
+          # for stringification implementation ordering).
+          # Ergo, we should use it every now and then, but we cannot
+          # enable it by default.
+          # "-Wunused-member-function"
         )
         foreach(warning ${CHECKED_WARNING_FLAGS})
             add_cxx_flag_if_supported_to_targets(${warning} "${targets}")

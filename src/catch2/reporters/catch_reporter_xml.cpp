@@ -13,6 +13,8 @@
 #include <catch2/internal/catch_string_manip.hpp>
 #include <catch2/internal/catch_list.hpp>
 #include <catch2/catch_test_case_info.hpp>
+#include <catch2/internal/catch_move_and_forward.hpp>
+#include <catch2/catch_version.hpp>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -22,9 +24,9 @@
 #endif
 
 namespace Catch {
-    XmlReporter::XmlReporter( ReporterConfig const& _config )
-    :   StreamingReporterBase( _config ),
-        m_xml(_config.stream())
+    XmlReporter::XmlReporter( ReporterConfig&& _config )
+    :   StreamingReporterBase( CATCH_MOVE(_config) ),
+        m_xml(m_stream)
     {
         m_preferences.shouldRedirectStdOut = true;
         m_preferences.shouldReportAllAssertions = true;
@@ -53,7 +55,8 @@ namespace Catch {
             m_xml.writeStylesheetRef( stylesheetRef );
         m_xml.startElement("Catch2TestRun")
              .writeAttribute("name"_sr, m_config->name())
-             .writeAttribute("rng-seed"_sr, m_config->rngSeed());
+             .writeAttribute("rng-seed"_sr, m_config->rngSeed())
+             .writeAttribute("catch2-version"_sr, libraryVersion());
         if (m_config->testSpec().hasFilters())
             m_xml.writeAttribute( "filters"_sr, serializeFilters( m_config->getTestsOrTags() ) );
     }
@@ -253,6 +256,19 @@ namespace Catch {
             m_xml.startElement("Description", XmlFormatting::Indent)
                  .writeText(reporter.description, XmlFormatting::None)
                  .endElement(XmlFormatting::Newline);
+        }
+    }
+
+    void XmlReporter::listListeners(std::vector<ListenerDescription> const& descriptions) {
+        auto outerTag = m_xml.scopedElement( "RegisteredListeners" );
+        for ( auto const& listener : descriptions ) {
+            auto inner = m_xml.scopedElement( "Listener" );
+            m_xml.startElement( "Name", XmlFormatting::Indent )
+                .writeText( listener.name, XmlFormatting::None )
+                .endElement( XmlFormatting::Newline );
+            m_xml.startElement( "Description", XmlFormatting::Indent )
+                .writeText( listener.description, XmlFormatting::None )
+                .endElement( XmlFormatting::Newline );
         }
     }
 

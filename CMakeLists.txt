@@ -9,7 +9,7 @@ else()
 endif()
 
 option(CATCH_INSTALL_DOCS "Install documentation alongside library" ON)
-option(CATCH_INSTALL_EXTRAS "Install extras alongside library" ON)
+option(CATCH_INSTALL_EXTRAS "Install extras (CMake scripts, debugger helpers) alongside library" ON)
 option(CATCH_DEVELOPMENT_BUILD "Build tests, enable warnings, enable Werror, etc" OFF)
 
 include(CMakeDependentOption)
@@ -20,6 +20,7 @@ cmake_dependent_option(CATCH_BUILD_FUZZERS "Build fuzzers" OFF "CATCH_DEVELOPMEN
 cmake_dependent_option(CATCH_ENABLE_COVERAGE "Generate coverage for codecov.io" OFF "CATCH_DEVELOPMENT_BUILD" OFF)
 cmake_dependent_option(CATCH_ENABLE_WERROR "Enables Werror during build" ON "CATCH_DEVELOPMENT_BUILD" OFF)
 cmake_dependent_option(CATCH_BUILD_SURROGATES "Enable generating and building surrogate TUs for the main headers" OFF "CATCH_DEVELOPMENT_BUILD" OFF)
+cmake_dependent_option(CATCH_ENABLE_CONFIGURE_TESTS "Enable CMake configuration tests. WARNING: VERY EXPENSIVE" OFF "CATCH_DEVELOPMENT_BUILD" OFF)
 
 
 # Catch2's build breaks if done in-tree. You probably should not build
@@ -35,12 +36,27 @@ if(CMAKE_VERSION VERSION_GREATER 3.8)
 endif()
 
 
-project(Catch2 LANGUAGES CXX VERSION 3.0.0)
+project(Catch2
+  VERSION 3.0.1 # CML version placeholder, don't delete
+  LANGUAGES CXX
+  HOMEPAGE_URL "https://github.com/catchorg/Catch2"
+  DESCRIPTION "A modern, C++-native, unit test framework."
+)
 
-# Provide path for scripts
+
+# Provide path for scripts. We first add path to the scripts we don't use,
+# but projects including us might, and set the path up to parent scope.
+# Then we also add path that we use to configure the project, but is of
+# no use to top level projects.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/extras")
+if (NOT NOT_SUBPROJECT)
+  set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include(CatchConfigOptions)
 if(CATCH_DEVELOPMENT_BUILD)
   include(CTest)
 endif()
@@ -93,16 +109,6 @@ if (CATCH_DEVELOPMENT_BUILD)
     add_warnings_to_targets("${CATCH_WARNING_TARGETS}")
 endif()
 
-
-#option(CATCH_USE_VALGRIND "Perform SelfTests with Valgrind" OFF)
-#option(CATCH_ENABLE_WERROR "Enable all warnings as errors" ON)
-#
-#set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-#
-#
-#
-#
-#
 # Only perform the installation steps when Catch is not being used as
 # a subproject via `add_subdirectory`, or the destinations will break,
 # see https://github.com/catchorg/Catch2/issues/1373
@@ -135,6 +141,7 @@ if (NOT_SUBPROJECT)
           docs/
         DESTINATION
           "${CMAKE_INSTALL_DOCDIR}"
+        PATTERN "doxygen" EXCLUDE
       )
     endif()
 

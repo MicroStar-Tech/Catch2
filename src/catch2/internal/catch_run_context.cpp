@@ -7,6 +7,7 @@
 // SPDX-License-Identifier: BSL-1.0
 #include <catch2/internal/catch_run_context.hpp>
 
+#include <catch2/catch_user_config.hpp>
 #include <catch2/interfaces/catch_interfaces_generatortracker.hpp>
 #include <catch2/interfaces/catch_interfaces_config.hpp>
 #include <catch2/internal/catch_compiler_capabilities.hpp>
@@ -31,7 +32,7 @@ namespace Catch {
             GeneratorTracker( TestCaseTracking::NameAndLocation const& nameAndLocation, TrackerContext& ctx, ITracker* parent )
             :   TrackerBase( nameAndLocation, ctx, parent )
             {}
-            ~GeneratorTracker();
+            ~GeneratorTracker() override;
 
             static GeneratorTracker& acquire( TrackerContext& ctx, TestCaseTracking::NameAndLocation const& nameAndLocation ) {
                 GeneratorTracker* tracker;
@@ -142,7 +143,7 @@ namespace Catch {
                 // this generator is still waiting for any child to start.
                 if ( should_wait_for_child ||
                      ( m_runState == CompletedSuccessfully &&
-                       m_generator->next() ) ) {
+                       m_generator->countedNext() ) ) {
                     m_children.clear();
                     m_runState = Executing;
                 }
@@ -159,7 +160,7 @@ namespace Catch {
         GeneratorTracker::~GeneratorTracker() = default;
     }
 
-    RunContext::RunContext(IConfig const* _config, IStreamingReporterPtr&& reporter)
+    RunContext::RunContext(IConfig const* _config, IEventListenerPtr&& reporter)
     :   m_runInfo(_config->name()),
         m_context(getCurrentMutableContext()),
         m_config(_config),
@@ -191,6 +192,39 @@ namespace Catch {
         ITracker& rootTracker = m_trackerContext.startRun();
         assert(rootTracker.isSectionTracker());
         static_cast<SectionTracker&>(rootTracker).addInitialFilters(m_config->getSectionsToRun());
+
+        // We intentionally only seed the internal RNG once per test case,
+        // before it is first invoked. The reason for that is a complex
+        // interplay of generator/section implementation details and the
+        // Random*Generator types.
+        //
+        // The issue boils down to us needing to seed the Random*Generators
+        // with different seed each, so that they return different sequences
+        // of random numbers. We do this by giving them a number from the
+        // shared RNG instance as their seed.
+        //
+        // However, this runs into an issue if the reseeding happens each
+        // time the test case is entered (as opposed to first time only),
+        // because multiple generators could get the same seed, e.g. in
+        // ```cpp
+        // TEST_CASE() {
+        //     auto i = GENERATE(take(10, random(0, 100));
+        //     SECTION("A") {
+        //         auto j = GENERATE(take(10, random(0, 100));
+        //     }
+        //     SECTION("B") {
+        //         auto k = GENERATE(take(10, random(0, 100));
+        //     }
+        // }
+        // ```
+        // `i` and `j` would properly return values from different sequences,
+        // but `i` and `k` would return the same sequence, because their seed
+        // would be the same.
+        // (The reason their seeds would be the same is that the generator
+        //  for k would be initialized when the test case is entered the second
+        //  time, after the shared RNG instance was reset to the same value
+        //  it had when the generator for i was initialized.)
+        seedRng( *m_config );
 
         uint64_t testRuns = 0;
         do {
@@ -421,8 +455,6 @@ namespace Catch {
         m_shouldReportUnexpected = true;
         m_lastAssertionInfo = { "TEST_CASE"_sr, testCaseInfo.lineInfo, StringRef(), ResultDisposition::Normal };
 
-        seedRng(*m_config);
-
         Timer timer;
         CATCH_TRY {
             if (m_reporter->getPreferences().shouldRedirectStdOut) {
@@ -597,10 +629,7 @@ namespace Catch {
     }
 
     void seedRng(IConfig const& config) {
-        if (config.rngSeed() != 0) {
-            std::srand(config.rngSeed());
-            rng().seed(config.rngSeed());
-        }
+        sharedRng().seed(config.rngSeed());
     }
 
     unsigned int rngSeed() {

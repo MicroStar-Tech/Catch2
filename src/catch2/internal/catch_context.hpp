@@ -10,20 +10,20 @@
 
 namespace Catch {
 
-    struct IResultCapture;
-    struct IConfig;
+    class IResultCapture;
+    class IConfig;
 
-    struct IContext
-    {
+    class IContext {
+    public:
         virtual ~IContext(); // = default
 
         virtual IResultCapture* getResultCapture() = 0;
         virtual IConfig const* getConfig() const = 0;
     };
 
-    struct IMutableContext : IContext
-    {
-        virtual ~IMutableContext(); // = default
+    class IMutableContext : public IContext {
+    public:
+        ~IMutableContext() override; // = default
         virtual void setResultCapture( IResultCapture* resultCapture ) = 0;
         virtual void setConfig( IConfig const* config ) = 0;
 
@@ -50,7 +50,7 @@ namespace Catch {
     void cleanUpContext();
 
     class SimplePcg32;
-    SimplePcg32& rng();
+    SimplePcg32& sharedRng();
 }
 
 #endif // CATCH_CONTEXT_HPP_INCLUDED

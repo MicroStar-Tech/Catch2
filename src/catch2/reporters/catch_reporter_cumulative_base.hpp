@@ -8,11 +8,10 @@
 #ifndef CATCH_REPORTER_CUMULATIVE_BASE_HPP_INCLUDED
 #define CATCH_REPORTER_CUMULATIVE_BASE_HPP_INCLUDED
 
-#include <catch2/interfaces/catch_interfaces_reporter.hpp>
+#include <catch2/reporters/catch_reporter_common_base.hpp>
 #include <catch2/internal/catch_unique_ptr.hpp>
 #include <catch2/internal/catch_optional.hpp>
 
-#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -59,7 +58,7 @@ namespace Catch {
      * performance. **Accessing the assertion expansions if it wasn't stored is
      * UB.**
      */
-    class CumulativeReporterBase : public IStreamingReporter {
+    class CumulativeReporterBase : public ReporterBase {
     public:
         template<typename T, typename ChildNodeT>
         struct Node {
@@ -89,9 +88,7 @@ namespace Catch {
         using TestCaseNode = Node<TestCaseStats, SectionNode>;
         using TestRunNode = Node<TestRunStats, TestCaseNode>;
 
-        CumulativeReporterBase( ReporterConfig const& _config ):
-            IStreamingReporter( _config.fullConfig() ),
-            m_stream( _config.stream() ) {}
+        using ReporterBase::ReporterBase;
         ~CumulativeReporterBase() override;
 
         void benchmarkPreparing( StringRef ) override {}
@@ -121,18 +118,11 @@ namespace Catch {
 
         void skipTest(TestCaseInfo const&) override {}
 
-        void listReporters( std::vector<ReporterDescription> const& descriptions ) override;
-        void listTests( std::vector<TestCaseHandle> const& tests ) override;
-        void listTags( std::vector<TagInfo> const& tags ) override;
-
     protected:
         //! Should the cumulative base store the assertion expansion for succesful assertions?
         bool m_shouldStoreSuccesfulAssertions = true;
         //! Should the cumulative base store the assertion expansion for failed assertions?
         bool m_shouldStoreFailedAssertions = true;
-
-        //! Stream to write the output to
-        std::ostream& m_stream;
 
         // We need lazy construction here. We should probably refactor it
         // later, after the events are redone.

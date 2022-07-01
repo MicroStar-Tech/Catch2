@@ -16,12 +16,16 @@
 
 namespace Catch {
 
-    struct IStreamingReporter;
+    class IEventListener;
     class Config;
 
 
     struct ReporterDescription {
         std::string name, description;
+    };
+    struct ListenerDescription {
+        StringRef name;
+        std::string description;
     };
 
     struct TagInfo {
@@ -32,7 +36,7 @@ namespace Catch {
         std::size_t count = 0;
     };
 
-    bool list( IStreamingReporter& reporter, Config const& config );
+    bool list( IEventListener& reporter, Config const& config );
 
 } // end namespace Catch
 

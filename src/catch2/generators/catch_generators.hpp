@@ -8,10 +8,13 @@
 #ifndef CATCH_GENERATORS_HPP_INCLUDED
 #define CATCH_GENERATORS_HPP_INCLUDED
 
+#include <catch2/catch_tostring.hpp>
 #include <catch2/interfaces/catch_interfaces_generatortracker.hpp>
 #include <catch2/internal/catch_source_line_info.hpp>
 #include <catch2/internal/catch_stringref.hpp>
 #include <catch2/internal/catch_move_and_forward.hpp>
+#include <catch2/internal/catch_unique_name.hpp>
+#include <catch2/internal/catch_preprocessor.hpp>
 
 #include <vector>
 #include <tuple>
@@ -29,7 +32,12 @@ namespace Detail {
 } // end namespace detail
 
     template<typename T>
-    struct IGenerator : GeneratorUntypedBase {
+    class IGenerator : public GeneratorUntypedBase {
+        std::string stringifyImpl() const override {
+            return ::Catch::Detail::stringify( get() );
+        }
+
+    public:
         ~IGenerator() override = default;
         IGenerator() = default;
         IGenerator(IGenerator const&) = default;
@@ -61,7 +69,7 @@ namespace Detail {
             return m_generator->get();
         }
         bool next() {
-            return m_generator->next();
+            return m_generator->countedNext();
         }
     };
 

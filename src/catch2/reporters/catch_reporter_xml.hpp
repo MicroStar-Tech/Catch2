@@ -17,7 +17,7 @@
 namespace Catch {
     class XmlReporter : public StreamingReporterBase {
     public:
-        XmlReporter(ReporterConfig const& _config);
+        XmlReporter(ReporterConfig&& _config);
 
         ~XmlReporter() override;
 
@@ -51,6 +51,7 @@ namespace Catch {
         void benchmarkFailed( StringRef error ) override;
 
         void listReporters(std::vector<ReporterDescription> const& descriptions) override;
+        void listListeners(std::vector<ListenerDescription> const& descriptions) override;
         void listTests(std::vector<TestCaseHandle> const& tests) override;
         void listTags(std::vector<TagInfo> const& tags) override;
 

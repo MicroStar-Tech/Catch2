@@ -8,7 +8,6 @@
 #ifndef CATCH_TOTALS_HPP_INCLUDED
 #define CATCH_TOTALS_HPP_INCLUDED
 
-#include <cstddef>
 #include <cstdint>
 
 namespace Catch {
@@ -33,7 +32,6 @@ namespace Catch {
 
         Totals delta( Totals const& prevTotals ) const;
 
-        int error = 0;
         Counts assertions;
         Counts testCases;
     };

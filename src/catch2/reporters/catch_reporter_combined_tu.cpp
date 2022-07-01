@@ -22,7 +22,7 @@
 #include <catch2/internal/catch_console_width.hpp>
 #include <catch2/internal/catch_errno_guard.hpp>
 #include <catch2/internal/catch_textflow.hpp>
-#include <catch2/internal/catch_stream.hpp>
+#include <catch2/internal/catch_reusable_string_stream.hpp>
 #include <catch2/internal/catch_string_manip.hpp>
 #include <catch2/internal/catch_console_colour.hpp>
 #include <catch2/catch_tostring.hpp>
@@ -152,6 +152,33 @@ namespace Catch {
         out << '\n' << std::flush;
     }
 
+    void defaultListListeners( std::ostream& out,
+                               std::vector<ListenerDescription> const& descriptions ) {
+        const auto maxNameLen =
+            std::max_element( descriptions.begin(),
+                              descriptions.end(),
+                              []( ListenerDescription const& lhs,
+                                  ListenerDescription const& rhs ) {
+                                  return lhs.name.size() < rhs.name.size();
+                              } )
+                ->name.size();
+
+        out << "Registered listeners:\n";
+        for ( auto const& desc : descriptions ) {
+            out << TextFlow::Column( static_cast<std::string>( desc.name ) +
+                                     ':' )
+                           .indent( 2 )
+                           .width( maxNameLen + 5 ) +
+                       TextFlow::Column( desc.description )
+                           .initialIndent( 0 )
+                           .indent( 2 )
+                           .width( CATCH_CONFIG_CONSOLE_WIDTH - maxNameLen - 8 )
+                << '\n';
+        }
+
+        out << '\n' << std::flush;
+    }
+
     void defaultListTags( std::ostream& out,
                           std::vector<TagInfo> const& tags,
                           bool isFiltered ) {
@@ -174,7 +201,7 @@ namespace Catch {
         out << pluralise(tags.size(), "tag"_sr) << "\n\n" << std::flush;
     }
 
-    void defaultListTests(std::ostream& out, std::vector<TestCaseHandle> const& tests, bool isFiltered, Verbosity verbosity) {
+    void defaultListTests(std::ostream& out, ColourImpl* streamColour, std::vector<TestCaseHandle> const& tests, bool isFiltered, Verbosity verbosity) {
         // We special case this to provide the equivalent of old
         // `--list-test-names-only`, which could then be used by the
         // `--input-file` option.
@@ -194,9 +221,9 @@ namespace Catch {
             Colour::Code colour = testCaseInfo.isHidden()
                 ? Colour::SecondaryText
                 : Colour::None;
-            Colour colourGuard(colour);
+            auto colourGuard = streamColour->guardColour( colour ).engage( out );
 
-            out << TextFlow::Column(testCaseInfo.name).initialIndent(2).indent(4) << '\n';
+            out << TextFlow::Column(testCaseInfo.name).indent(2) << '\n';
             if (verbosity >= Verbosity::High) {
                 out << TextFlow::Column(Catch::Detail::stringify(testCaseInfo.lineInfo)).indent(4) << '\n';
             }
@@ -233,6 +260,8 @@ namespace Catch {
     void EventListenerBase::assertionEnded( AssertionStats const& ) {}
     void EventListenerBase::listReporters(
         std::vector<ReporterDescription> const& ) {}
+    void EventListenerBase::listListeners(
+        std::vector<ListenerDescription> const& ) {}
     void EventListenerBase::listTests( std::vector<TestCaseHandle> const& ) {}
     void EventListenerBase::listTags( std::vector<TagInfo> const& ) {}
     void EventListenerBase::noMatchingTestCases( StringRef ) {}

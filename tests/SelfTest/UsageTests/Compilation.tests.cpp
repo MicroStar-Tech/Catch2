@@ -1,7 +1,10 @@
-/*
- *  Distributed under the Boost Software License, Version 1.0. (See accompanying
- *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- */
+
+//              Copyright Catch2 Authors
+// Distributed under the Boost Software License, Version 1.0.
+//   (See accompanying file LICENSE_1_0.txt or copy at
+//        https://www.boost.org/LICENSE_1_0.txt)
+
+// SPDX-License-Identifier: BSL-1.0
 
 #include <type_traits>
 
@@ -23,7 +26,7 @@ namespace bar {
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
-std::ostream& operator<<(std::ostream& out, foo::helper_1403 const&) {
+static std::ostream& operator<<(std::ostream& out, foo::helper_1403 const&) {
     return out << "[1403 helper]";
 }
 ///////////////////////////////
@@ -46,7 +49,7 @@ struct logic_t {
 };
 
 
-void throws_int(bool b) {
+static void throws_int(bool b) {
     if (b) {
         throw 1;
     }
@@ -66,7 +69,7 @@ bool templated_tests(T t) {
 
 struct A {};
 
-std::ostream &operator<<(std::ostream &o, const A &) { return o << 0; }
+static std::ostream &operator<<(std::ostream &o, const A &) { return o << 0; }
 
 struct B : private A {
     bool operator==(int) const { return true; }

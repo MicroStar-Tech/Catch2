@@ -1,3 +1,12 @@
+
+//              Copyright Catch2 Authors
+// Distributed under the Boost Software License, Version 1.0.
+//   (See accompanying file LICENSE_1_0.txt or copy at
+//        https://www.boost.org/LICENSE_1_0.txt)
+
+// SPDX-License-Identifier: BSL-1.0
+// Adapted from donated nonius code.
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/benchmark/catch_constructor.hpp>
@@ -142,4 +151,21 @@ TEST_CASE("Benchmark containers", "[!benchmark]") {
             meter.measure([&](int i) { storage[i].destruct(); });
         };
     }
+}
+
+TEST_CASE("Skip benchmark macros", "[!benchmark]") {
+    std::vector<int> v;
+    BENCHMARK("fill vector") {
+        v.emplace_back(1);
+        v.emplace_back(2);
+        v.emplace_back(3);
+    };
+    REQUIRE(v.size() == 0);
+
+    std::size_t counter{0};
+    BENCHMARK_ADVANCED("construct vector")(Catch::Benchmark::Chronometer meter) {
+        std::vector<Catch::Benchmark::storage_for<std::string>> storage(meter.runs());
+        meter.measure([&](int i) { storage[i].construct("thing"); counter++; });
+    };
+    REQUIRE(counter == 0);
 }

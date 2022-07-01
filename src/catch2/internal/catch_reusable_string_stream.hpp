@@ -5,11 +5,10 @@
 //        https://www.boost.org/LICENSE_1_0.txt)
 
 // SPDX-License-Identifier: BSL-1.0
-#ifndef CATCH_STREAM_HPP_INCLUDED
-#define CATCH_STREAM_HPP_INCLUDED
+#ifndef CATCH_REUSABLE_STRING_STREAM_HPP_INCLUDED
+#define CATCH_REUSABLE_STRING_STREAM_HPP_INCLUDED
 
 #include <catch2/internal/catch_noncopyable.hpp>
-#include <catch2/internal/catch_unique_ptr.hpp>
 
 #include <iosfwd>
 #include <cstddef>
@@ -17,17 +16,6 @@
 #include <string>
 
 namespace Catch {
-
-    std::ostream& cout();
-    std::ostream& cerr();
-    std::ostream& clog();
-
-    struct IStream {
-        virtual ~IStream(); // = default
-        virtual std::ostream& stream() const = 0;
-    };
-
-    auto makeStream( std::string const& filename ) -> Detail::unique_ptr<IStream const>;
 
     class ReusableStringStream : Detail::NonCopyable {
         std::size_t m_index;
@@ -66,4 +54,4 @@ namespace Catch {
     };
 }
 
-#endif // CATCH_STREAM_HPP_INCLUDED
+#endif // CATCH_REUSABLE_STRING_STREAM_HPP_INCLUDED

@@ -1,7 +1,10 @@
-/*
- *  Distributed under the Boost Software License, Version 1.0. (See accompanying
- *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
- */
+
+//              Copyright Catch2 Authors
+// Distributed under the Boost Software License, Version 1.0.
+//   (See accompanying file LICENSE_1_0.txt or copy at
+//        https://www.boost.org/LICENSE_1_0.txt)
+
+// SPDX-License-Identifier: BSL-1.0
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_template_test_macros.hpp>
@@ -842,10 +845,10 @@ TEST_CASE( "Combining concrete matchers does not use templated matchers",
 
 struct MatcherA : Catch::Matchers::MatcherGenericBase {
     std::string describe() const override {
-        return "equals: (int) 1 or (float) 1.0f";
+        return "equals: (int) 1 or (string) \"1\"";
     }
     bool match( int i ) const { return i == 1; }
-    bool match( float f ) const { return f == 1.0f; }
+    bool match( std::string s ) const { return s == "1"; }
 };
 
 struct MatcherB : Catch::Matchers::MatcherGenericBase {
