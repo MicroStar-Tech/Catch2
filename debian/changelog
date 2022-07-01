@@ -1,3 +1,9 @@
+catch2 (3.0.1-1c) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Xuqing Liu <ciwei100000@gmail.com>  Fri, 1 Jul 2022 05:40:12 -0700
+
 catch2 (3.0.0~preview4-1) unstable; urgency=medium
 
   * New upstream pre-release
