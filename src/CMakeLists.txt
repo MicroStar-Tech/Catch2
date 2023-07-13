@@ -21,6 +21,8 @@ set(BENCHMARK_HEADERS
   ${SOURCES_DIR}/benchmark/catch_sample_analysis.hpp
   ${SOURCES_DIR}/benchmark/detail/catch_analyse.hpp
   ${SOURCES_DIR}/benchmark/detail/catch_benchmark_function.hpp
+  ${SOURCES_DIR}/benchmark/detail/catch_benchmark_stats.hpp
+  ${SOURCES_DIR}/benchmark/detail/catch_benchmark_stats_fwd.hpp
   ${SOURCES_DIR}/benchmark/detail/catch_complete_invoke.hpp
   ${SOURCES_DIR}/benchmark/detail/catch_estimate_clock.hpp
   ${SOURCES_DIR}/benchmark/detail/catch_measure.hpp
@@ -71,6 +73,7 @@ set(IMPL_HEADERS
   ${SOURCES_DIR}/internal/catch_compiler_capabilities.hpp
   ${SOURCES_DIR}/internal/catch_config_android_logwrite.hpp
   ${SOURCES_DIR}/internal/catch_config_counter.hpp
+  ${SOURCES_DIR}/internal/catch_config_static_analysis_support.hpp
   ${SOURCES_DIR}/internal/catch_config_uncaught_exceptions.hpp
   ${SOURCES_DIR}/internal/catch_config_wchar.hpp
   ${SOURCES_DIR}/internal/catch_console_colour.hpp
@@ -128,6 +131,7 @@ set(IMPL_HEADERS
   ${SOURCES_DIR}/internal/catch_test_failure_exception.hpp
   ${SOURCES_DIR}/internal/catch_test_macro_impl.hpp
   ${SOURCES_DIR}/internal/catch_test_registry.hpp
+  ${SOURCES_DIR}/internal/catch_test_run_info.hpp
   ${SOURCES_DIR}/internal/catch_test_spec_parser.hpp
   ${SOURCES_DIR}/internal/catch_textflow.hpp
   ${SOURCES_DIR}/internal/catch_to_string.hpp
@@ -153,6 +157,7 @@ set(IMPL_SOURCES
   ${SOURCES_DIR}/catch_timer.cpp
   ${SOURCES_DIR}/catch_tostring.cpp
   ${SOURCES_DIR}/catch_totals.cpp
+  ${SOURCES_DIR}/catch_translate_exception.cpp
   ${SOURCES_DIR}/catch_version.cpp
   ${SOURCES_DIR}/internal/catch_assertion_handler.cpp
   ${SOURCES_DIR}/internal/catch_case_insensitive_comparisons.cpp
@@ -216,8 +221,8 @@ set(INTERFACE_HEADERS
   ${SOURCES_DIR}/interfaces/catch_interfaces_registry_hub.hpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_reporter.hpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_reporter_factory.hpp
-  ${SOURCES_DIR}/interfaces/catch_interfaces_reporter_registry.hpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_tag_alias_registry.hpp
+  ${SOURCES_DIR}/interfaces/catch_interfaces_test_invoker.hpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_testcase.hpp
 )
 set(INTERFACE_SOURCES
@@ -228,7 +233,6 @@ set(INTERFACE_SOURCES
   ${SOURCES_DIR}/interfaces/catch_interfaces_registry_hub.cpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_reporter.cpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_reporter_factory.cpp
-  ${SOURCES_DIR}/interfaces/catch_interfaces_reporter_registry.cpp
   ${SOURCES_DIR}/interfaces/catch_interfaces_testcase.cpp
 )
 set(INTERFACE_FILES ${INTERFACE_HEADERS} ${INTERFACE_SOURCES})
